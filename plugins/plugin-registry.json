@@ -1,0 +1,21 @@
+{
+  "plugins": [
+    {
+      "id": "content-moderation-plugin",
+      "name": "Content Moderation",
+      "type": "service",
+      "entry": "plugins/content-moderation-plugin/index.ts",
+      "enabled": true
+    },
+    {
+      "id": "marketplace-plugin",
+      "name": "Marketplace",
+      "type": "route",
+      "route": "/marketplace",
+      "label": "Marketplace",
+      "icon": "Store",
+      "entry": "plugins/marketplace-plugin/MarketplacePage.tsx",
+      "enabled": true
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+name = "anonbook"
+main = ".open-next/worker.js"
+compatibility_date = "2025-10-29"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+# Lets the worker call itself (used by OpenNext for ISR/revalidation). Keep the name in sync with `name` above.
+[[services]]
+binding = "WORKER_SELF_REFERENCE"
+service = "anonbook"
+
+# NEXT_PUBLIC_* values are inlined at BUILD time: set them in .env.local for local builds,
+# or as build variables in the Cloudflare dashboard (see .env.cloudflare.example).

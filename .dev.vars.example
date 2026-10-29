@@ -1,0 +1,3 @@
+# Copy to .dev.vars for `npm run preview` (local Workers runtime). Not committed.
+# OpenNext reads NEXTJS_ENV to pick which .env.* files Next loads at runtime.
+NEXTJS_ENV=development
