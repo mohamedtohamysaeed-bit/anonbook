@@ -14,3 +14,7 @@ service = "anonbook"
 
 # NEXT_PUBLIC_* values are inlined at BUILD time: set them in .env.local for local builds,
 # or as build variables in the Cloudflare dashboard (see .env.cloudflare.example).
+
+
+[version_management]
+enabled = false
