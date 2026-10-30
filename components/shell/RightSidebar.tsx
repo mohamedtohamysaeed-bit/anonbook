@@ -26,7 +26,7 @@ export default function RightSidebar() {
   };
 
   return (
-    <aside className="hidden xl:block sticky top-[72px] h-fit card p-3">
+    <aside className="hidden xl:block sticky top-[72px] h-fit sidebar-panel p-3">
       <h3 className="font-semibold text-[var(--text-secondary)] px-2 mb-2">Contacts</h3>
       {users.length === 0 && <p className="text-sm text-[var(--text-secondary)] px-2">No one else is here yet.</p>}
       <ul className="space-y-1">

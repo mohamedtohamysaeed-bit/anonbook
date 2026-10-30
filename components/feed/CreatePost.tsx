@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import { ImagePlus, X } from 'lucide-react';
 import { db } from '@/lib/db';
 import { moderatedUploadMany, ModerationError } from '@/plugins/content-moderation-plugin';
+import { StorageError } from '@/lib/storage';
 import Avatar from '../Avatar';
 import { useAnon } from '../AnonAuth';
 
@@ -34,6 +35,7 @@ export default function CreatePost({ onPosted }: { onPosted: () => void }) {
       onPosted();
     } catch (e: any) {
       if (e instanceof ModerationError) { setErr(e.message); clearMedia(); }
+      else if (e instanceof StorageError) { setErr(e.message); }
       else { console.error(e); setErr('حصلت مشكلة، حاول تاني'); }
     } finally {
       setBusy(false);
@@ -57,7 +59,7 @@ export default function CreatePost({ onPosted }: { onPosted: () => void }) {
           </button>
         </div>
       )}
-      {err && <p dir="rtl" className="mt-2 text-sm text-red-600">{err}</p>}
+      {err && <p dir="rtl" className="mt-2 text-sm text-red-400">{err}</p>}
 
       <div className="mt-3 pt-3 border-t border-[var(--border)] flex items-center justify-between">
         <button onClick={() => input.current?.click()} className="btn-ghost flex items-center gap-2">

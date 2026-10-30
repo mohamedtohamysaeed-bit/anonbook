@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Send } from 'lucide-react';
 import { db, Row } from '@/lib/db';
-import { ipfsUrl } from '@/lib/ipfs';
+import { mediaUrl } from '@/lib/storage';
 import { anonName } from '@/lib/utils';
 import Avatar from '@/components/Avatar';
 import { useAnon } from '@/components/AnonAuth';
@@ -86,13 +86,13 @@ export default function ProductDetail({ id }: { id: string }) {
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="card p-3">
           <div className="aspect-square rounded-xl overflow-hidden bg-[var(--bg-main)]">
-            {cids[active] && <img src={ipfsUrl(cids[active])} alt="" className="w-full h-full object-cover" />}
+            {cids[active] && <img src={mediaUrl(cids[active])} alt="" className="w-full h-full object-cover" />}
           </div>
           {cids.length > 1 && (
             <div className="grid grid-cols-4 gap-2 mt-2">
               {cids.map((c, i) => (
                 <button key={c} onClick={() => setActive(i)} className={`aspect-square rounded-xl overflow-hidden border-2 ${i === active ? 'border-[var(--primary)]' : 'border-[var(--border)]'}`}>
-                  <img src={ipfsUrl(c)} alt="" className="w-full h-full object-cover" />
+                  <img src={mediaUrl(c)} alt="" className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>

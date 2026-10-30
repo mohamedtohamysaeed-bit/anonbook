@@ -11,22 +11,28 @@ const toDataUrl = (file: File) =>
     r.readAsDataURL(file);
   });
 
+/** Demo-mode placeholder: keeps the file in this browser only and returns a fake CID. NOT stored anywhere else. */
+export async function mockUpload(file: File): Promise<string> {
+  const cid = 'bafymock' + Math.random().toString(36).slice(2, 12) + Date.now().toString(36);
+  try {
+    const map = JSON.parse(localStorage.getItem(MOCK_KEY) || '{}');
+    map[cid] = await toDataUrl(file);
+    localStorage.setItem(MOCK_KEY, JSON.stringify(map));
+  } catch (e) {
+    console.warn('Mock file could not be cached locally (too large for localStorage?)', e);
+  }
+  return cid;
+}
+
 /**
- * Pins a file on IPFS through the `pin` Edge Function (the Pinata JWT stays on the server).
- * Needs a signed-in wallet session. Without Supabase it returns a fake CID (dev only).
+ * Pins a file on IPFS through the `pin` Edge Function (the Pinata JWT stays on the server, never in the browser).
+ * Needs a signed-in wallet session. Throws if the function is not deployed or PINATA_JWT is missing.
+ * Prefer `uploadMedia` from lib/storage.ts, which adds fallbacks and visible warnings.
  */
 export async function uploadToIPFS(file: File): Promise<string> {
   if (!supabase) {
-    console.warn('TODO: Supabase is not configured. Using a MOCK CID - this file is NOT on IPFS.');
-    const cid = 'bafymock' + Math.random().toString(36).slice(2, 12) + Date.now().toString(36);
-    try {
-      const map = JSON.parse(localStorage.getItem(MOCK_KEY) || '{}');
-      map[cid] = await toDataUrl(file);
-      localStorage.setItem(MOCK_KEY, JSON.stringify(map));
-    } catch (e) {
-      console.warn('Mock file could not be cached locally (too large for localStorage?)', e);
-    }
-    return cid;
+    console.warn('Supabase is not configured: returning a MOCK CID. This file is NOT on IPFS.');
+    return mockUpload(file);
   }
 
   await authReady();
@@ -40,7 +46,7 @@ export async function uploadToIPFS(file: File): Promise<string> {
     headers: { Authorization: `Bearer ${token}`, apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY! },
     body: form,
   });
-  if (!res.ok) throw new Error(`Pin failed (${res.status})`);
+  if (!res.ok) throw new Error(`the "pin" Edge Function answered ${res.status}` + (res.status === 404 ? ' (not deployed)' : res.status === 401 ? ' (login token rejected: check JWT_SECRET)' : ' (check PINATA_JWT)'));
   return (await res.json()).cid as string;
 }
 

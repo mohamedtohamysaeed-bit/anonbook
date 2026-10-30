@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { X, ImagePlus } from 'lucide-react';
 import { db } from '@/lib/db';
 import { moderatedUploadMany, ModerationError } from '@/plugins/content-moderation-plugin';
+import { StorageError } from '@/lib/storage';
 import { useAnon } from '@/components/AnonAuth';
 import { CATEGORIES } from './categories';
 
@@ -35,6 +36,7 @@ export default function SellForm({ onClose, onCreated }: { onClose: () => void; 
       onCreated();
     } catch (e: any) {
       if (e instanceof ModerationError) { setErr(e.message); setFiles([]); }
+      else if (e instanceof StorageError) { setErr(e.message); }
       else { console.error(e); setErr('Could not publish the listing. Try again.'); }
     } finally {
       setBusy(false);
@@ -77,7 +79,7 @@ export default function SellForm({ onClose, onCreated }: { onClose: () => void; 
             </div>
           </div>
 
-          {err && <p dir="auto" className="text-sm text-red-600">{err}</p>}
+          {err && <p dir="auto" className="text-sm text-red-400">{err}</p>}
           <button onClick={submit} disabled={busy} className="btn-primary w-full">{busy ? 'Checking and publishing…' : 'Publish listing'}</button>
         </div>
       </div>

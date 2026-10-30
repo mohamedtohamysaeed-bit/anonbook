@@ -2,38 +2,65 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Discord-style dark theme is the default. Add the class "light" on <html> for the light variant. */
 :root {
-  --bg-main: #F7F8F5;
-  --bg-post: #FFFFFF;
-  --primary: #789580;
-  --primary-hover: #6a8571;
-  --text-main: #293B32;
-  --text-secondary: #5a6b62;
-  --border: #E4E8E2;
+  --bg-main: #313338;      /* page background */
+  --bg-post: #2B2D31;      /* cards / posts */
+  --bg-sidebar: #1E1F22;   /* header + sidebars */
+  --bg-input: #383A40;     /* inputs */
+  --primary: #5865F2;      /* blurple: buttons, Connect Wallet, links */
+  --primary-hover: #4752C4;
+  --text-main: #F2F3F5;
+  --text-secondary: #B5BAC1;
+  --border: #3F4147;
+  --online: #23A559;
+  --scrollbar: #1A1B1E;
+  --radius: 8px;
+  color-scheme: dark;
 }
-.dark {
-  --bg-main: #1a211d;
-  --bg-post: #293B32;
-  --primary: #789580;
-  --primary-hover: #8aa898;
-  --text-main: #F7F8F5;
-  --text-secondary: #a8b9ad;
-  --border: #3a4a3e;
+:root.light {
+  --bg-main: #FFFFFF;
+  --bg-post: #F2F3F5;
+  --bg-sidebar: #E3E5E8;
+  --bg-input: #EBEDEF;
+  --primary: #5865F2;
+  --primary-hover: #4752C4;
+  --text-main: #060607;
+  --text-secondary: #4E5058;
+  --border: #D4D7DC;
+  --online: #23A559;
+  --scrollbar: #C4C9CE;
+  color-scheme: light;
 }
 
+html { background: var(--bg-main); }
 body {
   background: var(--bg-main);
   color: var(--text-main);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Arabic", sans-serif;
+  font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, "Noto Sans Arabic", "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
+::selection { background: var(--primary); color: #fff; }
+
+* { scrollbar-width: thin; scrollbar-color: var(--scrollbar) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
 
 @layer components {
-  .card { background: var(--bg-post); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 2px 12px rgba(41,59,50,0.08); }
-  .input { background: var(--bg-main); border: 1px solid var(--border); border-radius: 12px; color: var(--text-main); padding: 0.55rem 0.85rem; width: 100%; outline: none; }
-  .input:focus { border-color: var(--primary); }
-  .btn-primary { background: var(--primary); color: #fff; border-radius: 12px; padding: 0.5rem 1rem; font-weight: 600; transition: background .15s; }
+  .card { background: var(--bg-post); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 1px 2px rgba(0,0,0,0.25); }
+  .sidebar-panel { background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: var(--radius); }
+  .input { background: var(--bg-input); border: 1px solid transparent; border-radius: var(--radius); color: var(--text-main); padding: 0.55rem 0.85rem; width: 100%; outline: none; }
+  .input::placeholder { color: var(--text-secondary); }
+  .input:focus { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
+  .btn-primary { background: var(--primary); color: #fff; border-radius: var(--radius); padding: 0.5rem 1rem; font-weight: 600; transition: background .15s; }
   .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
   .btn-primary:disabled { opacity: .55; cursor: not-allowed; }
-  .btn-ghost { color: var(--text-secondary); border-radius: 12px; padding: 0.5rem 0.75rem; transition: background .15s; }
+  .btn-ghost { color: var(--text-secondary); border-radius: var(--radius); padding: 0.5rem 0.75rem; transition: background .15s, color .15s; }
   .btn-ghost:hover { background: var(--bg-main); color: var(--text-main); }
+  .search-expand { transform-origin: right center; animation: search-expand .18s ease-out; }
+}
+@keyframes search-expand {
+  from { opacity: 0; transform: scaleX(0.15); }
+  to { opacity: 1; transform: scaleX(1); }
 }

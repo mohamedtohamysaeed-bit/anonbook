@@ -7,7 +7,14 @@ const lk = (t: string) => `anonbook_db_${t}`;
 const readLocal = (t: string): Row[] => {
   try { return JSON.parse(localStorage.getItem(lk(t)) || '[]'); } catch { return []; }
 };
-const writeLocal = (t: string, rows: Row[]) => localStorage.setItem(lk(t), JSON.stringify(rows));
+let warned = false;
+const writeLocal = (t: string, rows: Row[]) => {
+  if (!warned) {
+    warned = true;
+    console.warn('AnonBook storage fallback: Supabase is not configured, so data is saved ONLY in this browser (localStorage) and is lost if browser data is cleared. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY as build variables.');
+  }
+  localStorage.setItem(lk(t), JSON.stringify(rows));
+};
 const matches = (r: Row, m: Row) => Object.entries(m).every(([k, v]) => r[k] === v);
 
 /** Tiny data layer: Supabase when configured, localStorage otherwise. */

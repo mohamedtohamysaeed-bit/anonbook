@@ -27,6 +27,20 @@ function findNextBin() {
   return null;
 }
 
+// Files the app cannot build without. A missing one usually means the zip was extracted over a folder that got cleaned.
+const REQUIRED = ['package.json', 'next.config.js', 'app/layout.tsx', 'app/page.tsx', 'app/globals.css', 'lib/stubs/empty-module.js', 'lib/stubs/missing-module.js',
+  'lib/env.ts',
+  'lib/storage.ts'
+];
+const missingFiles = REQUIRED.filter((f) => !existsSync(join(process.cwd(), ...f.split('/'))));
+if (missingFiles.length) {
+  console.error(
+    '\n[build.mjs] Project files are missing in ' + process.cwd() + ':\n  ' + missingFiles.join('\n  ') + '\n' +
+    'The project was probably extracted into the wrong folder or partly deleted. Re-extract the zip into a NEW folder and copy it over (see README, "Updating on Windows").\n',
+  );
+  process.exit(1);
+}
+
 const nextBin = findNextBin();
 if (!nextBin) {
   console.error(
@@ -38,6 +52,8 @@ if (!nextBin) {
   );
   process.exit(1);
 }
+
+console.log(`[build.mjs] Node ${process.version} on ${process.platform} ${process.arch}`);
 
 function run(extraEnv = {}) {
   return new Promise((resolve) => {
@@ -78,6 +94,31 @@ if (result.code) {
     } catch (e) {
       console.error('(could not run tsc: ' + e.message + ')');
     }
+  }
+  const text = result.lines.join('\n');
+  const hints = [];
+  if (/not a valid Win32 application/i.test(text)) {
+    hints.push(
+      'A native Next.js (SWC) binary is damaged or does not match this machine (see the Node architecture printed at the top: it must be x64). ' +
+      'Next falls back to the slow WASM compiler. Reinstall: delete node_modules, run `npm cache verify`, then `npm install`.',
+    );
+  }
+  if (/type error/i.test(text) && /node_modules[\\/]@types[\\/]/.test(text)) {
+    hints.push(
+      'The type error is inside node_modules/@types, not in AnonBook code. That means a damaged or partial install (an interrupted ' +
+      'download, antivirus, or a full disk). Delete node_modules and reinstall; Cloudflare builds on a clean machine are not affected.',
+    );
+  }
+  if (process.platform === 'win32' && process.arch !== 'x64') {
+    hints.push('This Node reports architecture "' + process.arch + '" (32-bit). Next.js needs 64-bit Node on Windows: check `node -p "process.arch"`, it must print x64.');
+  }
+  if (/node_modules[\\/].*\.d\.ts/i.test(text) && /expected|unexpected end|unterminated/i.test(text)) {
+    hints.push('A file inside node_modules fails to PARSE (a truncated file). Fix in PowerShell:\n' +
+      '    Remove-Item -Recurse -Force node_modules, .next\n    npm.cmd cache clean --force\n    npm.cmd install');
+  }
+  if (hints.length) {
+    console.error('--- hints ---');
+    for (const h of hints) console.error('* ' + h);
   }
   console.error('--- last 40 lines ---');
   console.error(result.lines.slice(-40).join('\n'));

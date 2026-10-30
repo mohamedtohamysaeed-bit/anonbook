@@ -2,20 +2,21 @@
 import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 
+/** Dark (Discord) is the default. The toggle switches the "light" class on <html> and remembers the choice. */
 export default function ThemeToggle() {
-  const [dark, setDark] = useState(false);
-  useEffect(() => setDark(document.documentElement.classList.contains('dark')), []);
+  const [light, setLight] = useState(false);
+  useEffect(() => setLight(document.documentElement.classList.contains('light')), []);
 
   const toggle = () => {
-    const next = !dark;
-    document.documentElement.classList.toggle('dark', next);
-    localStorage.setItem('theme', next ? 'dark' : 'light');
-    setDark(next);
+    const next = !light;
+    document.documentElement.classList.toggle('light', next);
+    localStorage.setItem('theme', next ? 'light' : 'dark');
+    setLight(next);
   };
 
   return (
-    <button onClick={toggle} aria-label="Toggle dark mode" className="btn-ghost !p-2 bg-[var(--bg-main)] border border-[var(--border)]">
-      {dark ? <Sun size={18} /> : <Moon size={18} />}
+    <button onClick={toggle} aria-label="Toggle light / dark mode" className="btn-ghost !p-2 bg-[var(--bg-input)]">
+      {light ? <Moon size={18} /> : <Sun size={18} />}
     </button>
   );
 }

@@ -1,4 +1,4 @@
-import { uploadToIPFS } from '@/lib/ipfs';
+import { uploadMedia } from '@/lib/storage';
 import { loadNsfwModel } from '@/lib/nsfw';
 
 export const BLOCK_MESSAGE = 'الصورة دي غير مسموحة - محتوى غير لائق';
@@ -60,7 +60,7 @@ async function videoAllowed(model: any, file: File) {
 }
 
 /**
- * The only way media reaches IPFS in AnonBook.
+ * The only way media gets uploaded in AnonBook (IPFS, with Supabase Storage as a fallback; see lib/storage.ts).
  * Checks every file first; if any is blocked nothing is uploaded.
  * If the check cannot run (model or CDN unreachable), the upload is refused (fail closed).
  */
@@ -81,5 +81,5 @@ export async function moderatedUploadMany(files: File[]): Promise<string[]> {
     }
     if (!ok) throw new ModerationError(BLOCK_MESSAGE);
   }
-  return Promise.all(files.map(uploadToIPFS));
+  return Promise.all(files.map(async (f) => (await uploadMedia(f)).ref));
 }

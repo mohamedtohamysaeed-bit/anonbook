@@ -1,6 +1,6 @@
 {
   "name": "anonbook",
-  "version": "0.1.0",
+  "version": "0.6.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -24,7 +24,7 @@
     "wagmi": "^2.12.17"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
+    "@types/node": "20.11.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "autoprefixer": "^10.4.20",
@@ -36,5 +36,8 @@
   },
   "engines": {
     "node": ">=22.0.0"
+  },
+  "overrides": {
+    "@types/node": "20.11.0"
   }
 }

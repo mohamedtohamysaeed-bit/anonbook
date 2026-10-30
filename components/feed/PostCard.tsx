@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Heart, MessageCircle, Share2 } from 'lucide-react';
 import { db, Row } from '@/lib/db';
-import { ipfsUrl } from '@/lib/ipfs';
+import { mediaUrl } from '@/lib/storage';
 import { anonName, timeAgo } from '@/lib/utils';
 import Avatar from '../Avatar';
 import { useAnon } from '../AnonAuth';
@@ -36,7 +36,7 @@ export default function PostCard({ post, likes, comments, onChange }: { post: Ro
     setTimeout(() => setCopied(false), 1500);
   };
 
-  const img = ipfsUrl(post.image_cid);
+  const img = mediaUrl(post.image_cid);
 
   return (
     <article id={post.id} className="card">

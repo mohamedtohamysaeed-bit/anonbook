@@ -55,9 +55,9 @@ if (!global.__anonbookStubLogged) {
 
 const nextConfig = {
   reactStrictMode: true,
-  // Diagnostic switch: SKIP_TYPECHECK=1 (build variable) ignores type/lint errors for one build.
+  // Diagnostic switches (build variables): SKIP_TYPECHECK=1 ignores type AND lint errors for one build; NO_LINT=1 skips lint only.
   typescript: { ignoreBuildErrors: process.env.SKIP_TYPECHECK === '1' },
-  eslint: { ignoreDuringBuilds: process.env.SKIP_TYPECHECK === '1' },
+  eslint: { ignoreDuringBuilds: process.env.SKIP_TYPECHECK === '1' || process.env.NO_LINT === '1' },
   webpack: (config, { webpack }) => {
     config.resolve.fallback = { ...config.resolve.fallback, fs: false };
     config.resolve.alias = { ...config.resolve.alias };

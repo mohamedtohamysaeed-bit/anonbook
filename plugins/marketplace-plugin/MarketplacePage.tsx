@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { db, Row } from '@/lib/db';
-import { ipfsUrl } from '@/lib/ipfs';
+import { mediaUrl } from '@/lib/storage';
 import { CATEGORIES } from './categories';
 import SellForm from './SellForm';
 
@@ -56,7 +56,7 @@ export default function MarketplacePage() {
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {shown.map((p) => {
-              const img = ipfsUrl(p.image_cids?.[0]);
+              const img = mediaUrl(p.image_cids?.[0]);
               return (
                 <Link key={p.id} href={`/marketplace/${p.id}`} className="card overflow-hidden block hover:shadow-md transition-shadow">
                   <div className="aspect-square bg-[var(--bg-main)]">
