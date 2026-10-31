@@ -1,20 +1,22 @@
+# The Worker name MUST equal the Worker connected to Workers Builds in the dashboard, and `service` below must equal it too.
 name = "anonbook"
 main = ".open-next/worker.js"
 compatibility_date = "2025-10-29"
 compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
 
+# Keeps the https://anonbook.<your-subdomain>.workers.dev URL switched on at every deploy.
+workers_dev = true
+
 [assets]
 directory = ".open-next/assets"
 binding = "ASSETS"
 
-# Lets the worker call itself (used by OpenNext for ISR/revalidation). Keep the name in sync with `name` above.
+# Lets the worker call itself (used by OpenNext for ISR/revalidation).
 [[services]]
 binding = "WORKER_SELF_REFERENCE"
 service = "anonbook"
 
-# NEXT_PUBLIC_* values are inlined at BUILD time: set them in .env.local for local builds,
-# or as build variables in the Cloudflare dashboard (see .env.cloudflare.example).
-
-
-[version_management]
-enabled = false
+# Deliberately NO [vars] and NO [version_management]:
+# - NEXT_PUBLIC_* values are copied into the code at BUILD time. [vars] only exists at runtime, so it cannot fill them.
+#   Put them in Settings -> Build -> Variables and secrets (see .env.example).
+# - [version_management] is not a Wrangler option (it is ignored). `wrangler deploy` already deploys at 100%.
